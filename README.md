@@ -31,16 +31,18 @@ brew install fzf fd ripgrep tree chafa
 | [chafa](https://hpjansson.org/chafa/) | 终端内图片预览 |
 | vim / [VSCode](https://code.visualstudio.com/) | 文件打开器 |
 
-> 本脚本依赖 oh-my-zsh 的 `~/.oh-my-zsh/custom/scripts/fx-preview.sh` 脚本用于文件内容预览（含图片预览）。请确保该脚本存在且可执行。
+> 本脚本依赖 `scripts/fx-preview.sh` 用于文件内容预览（含图片预览）。安装时请将其一并复制到 `~/.oh-my-zsh/custom/scripts/` 并确保可执行。
 
 ## 安装
 
 **前提：已安装 [oh-my-zsh](https://ohmyz.sh/)**
 
-1. 将 `fzf.zsh` 复制到 oh-my-zsh 自定义目录：
+1. 将 `fzf.zsh` 和预览脚本复制到 oh-my-zsh 自定义目录：
 
 ```zsh
 cp fzf.zsh ~/.oh-my-zsh/custom/
+cp scripts/fx-preview.sh ~/.oh-my-zsh/custom/scripts/
+chmod +x ~/.oh-my-zsh/custom/scripts/fx-preview.sh
 ```
 
 oh-my-zsh 会自动 source `custom/` 目录下的所有 `.zsh` 文件，无需手动引入。
