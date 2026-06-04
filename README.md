@@ -249,6 +249,10 @@ truncation_symbol = ""
 # 两行提示符，输入命令始终从新行开始
 [line_break]
 disabled = false
+
+# 成功提示符改为绿色 $（主题默认为 ❯）
+[character]
+success_symbol = '[\$](bold fg:green)'
 ```
 
 详见 [Starship 文档](https://starship.rs/config/) 与 [预设列表](https://starship.rs/presets/)。
