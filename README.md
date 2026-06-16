@@ -18,6 +18,7 @@ brew install fzf fd ripgrep bat git-delta lsd ncdu duf starship fnm curlie tree 
 | [ripgrep](#ripgrep-rg) | `grep` | 更快的代码全文搜索（fzf 依赖） |
 | [bat](#bat) | `cat` | 语法高亮文件查看器（fzf 预览依赖） |
 | [fzf](#fzf) | — | 模糊搜索核心引擎 |
+| [cc](#cc) | — | Claude Code 启动器（可组合子选项） |
 | [lsd](#lsd) | `ls` | 彩色目录列表 |
 | [duf](#duf) | `df` | 磁盘挂载点总览 |
 | [ncdu](#ncdu) | `du` | 交互式磁盘用量分析 |
@@ -112,6 +113,53 @@ source ~/.zshrc
 | `**<Tab>` | 模糊补全触发（`vim **<Tab>`、`cd **<Tab>` 等） |
 
 详见 [fzf.zsh](fzf.zsh)。
+
+---
+
+## cc
+
+Claude Code（`claude`）的启动器函数，把常用选项做成可组合、顺序无关的子命令。仓库提供函数（`cc.zsh`）和 Zsh 补全（`completions/_cc`）。
+
+**部署函数与补全：**
+
+```bash
+cp cc.zsh ~/.oh-my-zsh/custom/
+cp completions/_cc ~/.oh-my-zsh/custom/completions/
+# 若 ~/.zshrc 里有 alias cc=... 需删除或注释，否则会遮蔽函数
+rm -f ~/.zcompdump*   # 改了补全文件后清缓存，否则 Tab 补全不更新
+exec zsh
+```
+
+**子命令**（开头的子选项可累加、顺序无关；遇到第一个非子选项词即停止，其余原样透传给 `claude`）：
+
+| 子命令 | 等价选项 | 说明 |
+|--------|----------|------|
+| `danger` | `--allow-dangerously-skip-permissions --permission-mode bypassPermissions` | 跳过所有权限确认 |
+| `gitrepo` | `--add-dir <你的工作区>` | 把工作区目录加入上下文（路径在 `cc.zsh` 配置） |
+| `proxy` | 设置 `HTTPS_PROXY` / `HTTP_PROXY` | 通过内网代理运行（地址在 `cc.zsh` 配置） |
+| `continue` | `--continue` | 继续当前目录最近一次对话 |
+| `resume` | `--resume [id]` | 恢复会话；无 id 时弹交互选择器 |
+| `model-opus` | `--model "opus[1m]"` | 用 opus + 1M 上下文 |
+| `model-sonnet` | `--model "sonnet[1m]"` | 用 sonnet + 1M 上下文 |
+
+**示例：**
+
+```bash
+cc                        # = claude
+cc gitrepo                # = claude --add-dir <你的工作区>
+cc danger gitrepo proxy   # 三者组合
+cc gitrepo "fix the bug"  # 子选项 + prompt（prompt 透传给 claude）
+cc resume                 # 恢复会话（交互选择器）
+cc model-opus             # opus + 1M 上下文
+```
+
+**注意：**
+
+- `opus[1m]` / `sonnet[1m]` 在 zsh 中必须加引号（函数内已处理），否则 `[1m]` 会被当作 glob 报 `no matches found`。
+- 多个选项若都设 `--permission-mode`（如 `danger`），命令行靠后的生效。
+- Tab 补全只在子选项位置给候选；出现非子选项词后停止（之后透传给 `claude`，无补全）。
+
+详见 [cc.zsh](cc.zsh)。
 
 ---
 

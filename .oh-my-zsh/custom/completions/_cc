@@ -1,0 +1,34 @@
+#compdef cc
+# Completion for the `cc` dispatcher (see custom/cc.zsh).
+# Offers sub-options while every word before the cursor is still a known
+# sub-option, and hides ones already typed. Once a non-sub-option word appears,
+# completion stops (the rest is forwarded to claude, which ships no completion).
+local -a subcmds used remaining
+subcmds=(
+  'danger:skip permission prompts (bypassPermissions)'
+  'gitrepo:add-dir the gitrepo workspace'
+  'proxy:run via the trendnet proxy'
+  'continue:continue the most recent conversation'
+  'resume:resume a conversation (picker, or pass a session id)'
+  'model-opus:use opus with 1M context'
+  'model-sonnet:use sonnet with 1M context'
+)
+
+local w all_sub=1
+# (@) is required. A quoted empty slice "${words[2,0]}" expands to one empty
+# string (breaks `cc <tab>`); a multi-word slice would join into a single
+# scalar (breaks `cc danger gitrepo <tab>`). (@) forces element-wise expansion.
+for w in "${(@)words[2,CURRENT-1]}"; do
+  case "$w" in
+    danger|gitrepo|proxy|continue|resume|model-opus|model-sonnet) used+=("$w") ;;
+    *) all_sub=0; break ;;
+  esac
+done
+
+if (( all_sub )); then
+  local pair
+  for pair in "${subcmds[@]}"; do
+    [[ -n "${used[(r)${pair%%:*}]}" ]] || remaining+=("$pair")
+  done
+  _describe 'cc option' remaining
+fi
